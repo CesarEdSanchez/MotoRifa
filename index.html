@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifa del Día de la Independencia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; /* Verde claro */
+        }
+        .independence-green {
+            background-color: #10B981; /* Verde fuerte */
+        }
+        .independence-white {
+            background-color: #F9FAFB; /* Blanco */
+        }
+        .independence-red {
+            background-color: #EF4444; /* Rojo fuerte */
+        }
+        .text-independence-green {
+            color: #059669;
+        }
+        .text-independence-red {
+            color: #DC2626;
+        }
+        .flag-gradient {
+            background: linear-gradient(to right, #10B981 33%, #F9FAFB 33%, #F9FAFB 66%, #EF4444 66%);
+        }
+        /* Estilos para el modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+        }
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #EF4444;
+        }
+        /* Estilos para números según su estado de pago */
+        .available-number {
+            background-color: #F3F4F6; /* gray-100 */
+            color: #4B5563; /* gray-700 */
+            border-color: #D1D5DB; /* gray-300 */
+            cursor: pointer;
+            pointer-events: auto; /* Permitir clics */
+        }
+        .partially-paid-number {
+            background-color: #FDE68A !important; /* Tailwind yellow-200 */
+            color: #92400E !important; /* Tailwind yellow-800 */
+            border-color: #D97706 !important; /* Tailwind yellow-700 */
+            cursor: pointer !important; /* Permitir clics */
+            pointer-events: auto !important; /* Permitir clics */
+        }
+        .fully-paid-number {
+            background-color: #A7F3D0 !important; /* Tailwind green-200 */
+            color: #065F46 !important; /* Tailwind green-800 */
+            border-color: #047857 !important; /* Tailwind green-700 */
+            cursor: pointer !important; /* Permitir clics */
+            pointer-events: auto !important; /* Permitir clics */
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-4xl w-full bg-white shadow-xl rounded-xl overflow-hidden border-4 border-green-600">
+        <!-- Encabezado con temática de bandera (más limpio y minimalist) -->
+        <div class="flag-gradient p-6 text-center">
+            <h1 class="text-3xl sm:text-4xl font-extrabold mb-2 text-black">
+                ¡Gran Rifa del Día de la Independencia!
+            </h1>
+            <p class="text-xl sm:text-2xl font-semibold text-black">
+                Gana una Motocicleta Eléctrica Nueva
+            </p>
+        </div>
+
+        <div class="p-6 sm:p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Premio:</h2>
+                    <p class="text-xl text-gray-700 mb-4">
+                        <span class="font-bold">Motoneta Eléctrica HONEY WHALE modelo U8S Verde Nueva</span>
+                    </p>
+                    <div class="space-y-2">
+                        <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                            <!-- Foto de la motocicleta proporcionada por el usuario, ajustada a object-contain -->
+                            <img src="https://honeywhale.com.mx/wp-content/uploads/2024/07/u8sV1.webp" alt="Motoneta Eléctrica HONEY WHALE U8S Verde" class="w-full h-full object-contain" onerror="this.onerror=null;this.src='https://placehold.co/300x200/E5E7EB/4B5563?text=Imagen+no+disponible';">
+                        </div>
+                        <div class="w-full h-32 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                            <!-- Espacio para una foto adicional con la imagen de Lotería Nacional, ajustada a object-cover -->
+                            <img src="https://logowik.com/content/uploads/images/loteria-nacional5167.logowik.com.webp" alt="Logo de Lotería Nacional" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/300x200/E5E7EB/4B5563?text=Foto+Adicional';">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Detalles de la Rifa:</h2>
+                    <p class="text-lg text-gray-700 mb-2">
+                        <span class="font-semibold">Costo por Boleto:</span> <span class="text-independence-red font-bold text-2xl">$300.00 MXN</span>
+                    </p>
+                    <p class="text-lg text-gray-700 mb-2">
+                        <span class="font-semibold">Fecha del Sorteo:</span> <span class="font-bold">15 de Septiembre de 2025</span>
+                    </p>
+                    <p class="text-lg text-gray-700 mb-4">
+                        <span class="font-semibold">Hora del Sorteo:</span> <span class="font-bold">8:00 PM (Hora Centro de México)</span>
+                    </p>
+                    <p class="text-base text-gray-600 mb-4">
+                        ¡No te pierdas la oportunidad de celebrar la Independencia de México con un premio que te llevará a donde quieras!
+                        Un solo número puede cambiar tu suerte.
+                    </p>
+                    <p class="text-base text-gray-600">
+                        El ganador será el boleto cuyos dos últimos dígitos coincidan con los dos últimos dígitos del Sorteo MAGNO 389 de la Lotería Nacional, el mismo día y hora. ¡Asegura tu boleto y gritemos juntos: ¡Viva México!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Sección de detalles del Día de la Independencia -->
+            <div class="bg-gradient-to-r from-green-500 via-white to-red-500 p-4 rounded-lg shadow-md mb-8 text-center">
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">¡Celebremos la Independencia de México!</h3>
+                <p class="text-gray-700 mb-3">
+                    El 15 de septiembre conmemoramos el Grito de Dolores, el llamado a la libertad que marcó el inicio de la lucha por la Independencia de México.
+                    Es una fecha de orgullo nacional, donde recordamos a los héroes que nos dieron patria y libertad.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 mt-4">
+                    <img src="https://tse3.mm.bing.net/th/id/OIP.n-TVuLsZcbNQpdbMv_tkJQHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Bandera de México" class="w-24 h-auto rounded-md shadow-sm object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x150/E5E7EB/4B5563?text=Bandera';">
+                    <img src="https://media3.giphy.com/media/XfJ8vpCva6SJH2BqyO/source.gif" alt="Campana de Dolores" class="w-24 h-auto rounded-md shadow-sm object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x150/E5E7EB/4B5563?text=Campana';">
+                    <img src="https://www.thoughtco.com/thmb/3MP3tcXQtKFZPAbJik5OzHM23q0=/1441x1200/filters:no_upscale():max_bytes(150000):strip_icc()/Hidalgo5-58b89b733df78c353cc68fc0.jpg" alt="Miguel Hidalgo y Costilla" class="w-24 h-auto rounded-md shadow-sm object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x150/E5E7EB/4B5563?text=Hidalgo';">
+                </div>
+                <p class="text-sm text-gray-600 mt-3">
+                    Imágenes representativas: Bandera de México, Campana de Dolores, Miguel Hidalgo y Costilla.
+                </p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Números Disponibles (Elige el tuyo):</h2>
+            <div id="numbers-grid" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2 sm:gap-3">
+                <!-- Los números se generarán aquí por JavaScript -->
+            </div>
+            <p class="text-center text-sm text-gray-500 mt-6">
+                Haz clic en un número para registrarte o modificar datos. Los números en amarillo tienen saldo pendiente y los verdes están pagados.
+            </p>
+        </div>
+
+        <div class="independence-red text-white p-4 text-center text-sm sm:text-base">
+            ¡Mucha suerte a todos los participantes! ¡Viva México!
+        </div>
+    </div>
+
+    <!-- Modal para el formulario de participantes -->
+    <div id="participant-modal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl w-full bg-white shadow-xl rounded-xl overflow-hidden border-4 border-green-600">
+            <span class="close-button" id="close-modal">&times;</span>
+            <div class="independence-green-dark text-white p-6 text-center">
+                <h1 class="text-2xl sm:text-3xl font-extrabold">Registro de Participantes</h1>
+                <p class="text-lg sm:text-xl font-semibold mt-1">Rifa Motocicleta Eléctrica HONEY WHALE</p>
+            </div>
+
+            <div class="p-6 sm:p-8">
+                <div id="message-area" class="hidden px-4 py-3 rounded relative mb-4" role="alert"></div>
+                <p id="user-id-display" class="text-sm text-gray-500 text-right mb-4">ID de Usuario: Cargando...</p>
+
+                <form id="participant-form" class="space-y-6">
+                    <div class="mb-4">
+                        <label class="block text-lg font-medium text-gray-700 mb-2">Número de Boleto Seleccionado:</label>
+                        <p id="display_numero_boleto" class="text-3xl font-bold text-green-700 bg-green-50 p-3 rounded-md text-center border border-green-200"></p>
+                        <!-- Campo oculto para el número de boleto seleccionado -->
+                        <input type="hidden" id="numero_boleto_hidden" name="numero_boleto">
+                    </div>
+
+                    <div>
+                        <label for="nombre" class="block text-lg font-medium text-gray-700 mb-2">Nombre Completo:</label>
+                        <input type="text" id="nombre" name="nombre" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-base" placeholder="Ej: Juan Pérez García" required>
+                    </div>
+                    <div>
+                        <label for="direccion" class="block text-lg font-medium text-gray-700 mb-2">Dirección Completa:</label>
+                        <textarea id="direccion" name="direccion" rows="3" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-base" placeholder="Ej: Calle Falsa 123, Colonia Centro, Ciudad, Estado, C.P. 12345" required></textarea>
+                    </div>
+                    <div>
+                        <label for="telefono" class="block text-lg font-medium text-gray-700 mb-2">Número de Teléfono:</label>
+                        <input type="tel" id="telefono" name="telefono" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-base" placeholder="Ej: 55 1234 5678" required>
+                    </div>
+
+                    <div>
+                        <label for="abono" class="block text-lg font-medium text-gray-700 mb-2">Abono (MXN):</label>
+                        <input type="number" id="abono" name="abono" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-base" placeholder="Ej: 100" min="0" step="1" required>
+                        <p id="abono-validation-message" class="text-red-500 text-sm mt-1 hidden">Favor de colocar un número entre 0 y 300.</p>
+                    </div>
+                    <div>
+                        <label for="saldo_pendiente" class="block text-lg font-medium text-gray-700 mb-2">Saldo Pendiente (MXN):</label>
+                        <input type="text" id="saldo_pendiente" name="saldo_pendiente" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700 sm:text-base" readonly disabled>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                        <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-lg font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                            Guardar Registro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // URL de tu aplicación web de Google Apps Script (¡REEMPLAZA ESTO CON TU URL REAL!)
+        // Asegúrate de que esta URL sea la de tu implementación de Apps Script como "Aplicación web"
+        // y que "Quién tiene acceso" esté configurado como "Cualquier persona".
+        const APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwaa7ZSsa7kXo8o8dlRnRjDLkMiCf_V9PFl_O5l16YTEmy5bCTxiXFOGkErkA1vd5gc/exec'; 
+
+        let db;
+        let auth;
+        let currentUserId = 'anonymous'; // Default to anonymous
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // Initialize Firebase and Auth
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        const messageDiv = document.getElementById('message-area');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const participantModal = document.getElementById('participant-modal');
+        const closeModalButton = document.getElementById('close-modal');
+        const numbersContainer = document.getElementById('numbers-grid');
+        const abonoInput = document.getElementById('abono');
+        const saldoPendienteInput = document.getElementById('saldo_pendiente');
+        const displayNumeroBoleto = document.getElementById('display_numero_boleto');
+        const abonoValidationMessage = document.getElementById('abono-validation-message');
+        const ticketPrice = 300; // Costo fijo del boleto (entero)
+
+        // Map to keep track of participant data by number, including Firestore docId
+        const participantDataMap = new Map(); // Stores { number: { docId, name, address, phone, abono, saldoPendiente } }
+        const numberDivs = {}; // Store references to number divs by their number
+
+        // Authenticate user and set up auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                userIdDisplay.textContent = `ID de Usuario: ${currentUserId}`;
+                await fetchParticipantData(); // Fetch all participant data after authentication
+            } else {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Error during authentication:", error);
+                    showMessage('Error de autenticación. Intenta de nuevo.', 'error');
+                }
+            }
+        });
+
+        // Function to display messages in the modal
+        function showMessage(text, type = 'success') {
+            messageDiv.textContent = text;
+            if (type === 'success') {
+                messageDiv.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4';
+            } else {
+                messageDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4';
+            }
+            messageDiv.style.display = 'block';
+        }
+
+        // Function to update the UI of a specific number div based on abono
+        function updateNumberUI(number, abono) { // Now takes abono directly
+            const div = numberDivs[number];
+            if (div) {
+                console.log(`Actualizando UI para el número ${number}. Abono: ${abono}`); // Log de depuración
+                // Eliminar todas las clases de estado de pago primero
+                div.classList.remove('available-number', 'partially-paid-number', 'fully-paid-number');
+
+                // Si el abono es igual al precio total del boleto, es verde
+                if (abono === ticketPrice) {
+                    div.classList.add('fully-paid-number');
+                } else if (abono > 0 && abono < ticketPrice) { // Si hay abono pero no es total, es amarillo
+                    div.classList.add('partially-paid-number');
+                } else {
+                    // Si el abono es 0, o no hay abono registrado, es gris (disponible)
+                    div.classList.add('available-number');
+                }
+            }
+        }
+
+        // Function to fetch all participant data from Firestore
+        async function fetchParticipantData() {
+            if (!db) {
+                console.error("Firestore no inicializado para obtener datos de participantes.");
+                return;
+            }
+            try {
+                const q = query(collection(db, `artifacts/${appId}/public/data/raffleParticipants`));
+                const querySnapshot = await getDocs(q);
+                participantDataMap.clear(); // Clear existing map before re-populating
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.raffleNumber) {
+                        const num = data.raffleNumber;
+                        const abono = parseInt(data.abono) || 0; // Ensure abono is an integer
+                        // Store the full document data including its ID
+                        participantDataMap.set(num, {
+                            docId: doc.id,
+                            name: data.name,
+                            address: data.address,
+                            phone: data.phone,
+                            abono: abono,
+                            saldoPendiente: parseInt(data.saldoPendiente) || 0 // Store saldoPendiente as well
+                        });
+                        updateNumberUI(num, abono); // Update UI based on fetched abono
+                    }
+                });
+            } catch (e) {
+                console.error("Error al obtener datos de participantes: ", e);
+                showMessage('Error al cargar datos de participantes.', 'error');
+            }
+        }
+
+        // Function to validate abono input
+        function validateAbono() {
+            const abonoValue = parseInt(abonoInput.value); // Parse as integer
+            if (isNaN(abonoValue) || abonoValue < 0 || abonoValue > 300) {
+                abonoValidationMessage.classList.remove('hidden');
+                return false;
+            } else {
+                abonoValidationMessage.classList.add('hidden');
+                return true;
+            }
+        }
+
+        // Function to calculate and update pending balance
+        function updateSaldoPendiente() {
+            if (validateAbono()) {
+                const abono = parseInt(abonoInput.value) || 0; // Parse as integer
+                const saldoPendiente = ticketPrice - abono;
+                saldoPendienteInput.value = saldoPendiente.toFixed(0); // Format to 0 decimal places for integers
+            } else {
+                saldoPendienteInput.value = ''; // Clear saldo if abono is invalid
+            }
+        }
+
+        // Function to send data to Google Apps Script
+        async function sendDataToGoogleSheet(data) {
+            try {
+                console.log("Intentando enviar datos a Google Apps Script URL:", APPS_SCRIPT_WEB_APP_URL); // Log the URL
+                
+                // Convertir el objeto de datos a URLSearchParams
+                const formData = new URLSearchParams();
+                for (const key in data) {
+                    formData.append(key, data[key]);
+                }
+
+                const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
+                    method: 'POST',
+                    // No establecer Content-Type: application/json
+                    // fetch lo establecerá automáticamente como application/x-www-form-urlencoded
+                    // cuando el body es URLSearchParams
+                    body: formData, // Enviar como URLSearchParams
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                }
+
+                // El Apps Script ahora devuelve JSON, por lo que necesitamos parsearlo
+                const result = await response.json(); 
+                if (result.success) {
+                    console.log('Datos enviados a Google Sheet con éxito:', result.message);
+                } else {
+                    console.error('Error al enviar datos a Google Sheet:', result.error);
+                    showMessage('Error al sincronizar con Google Sheet: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error en la llamada a Google Apps Script:', error);
+                showMessage('Error de conexión con Google Sheet: ' + error.message + '. Por favor, verifica la URL de tu Apps Script y su despliegue (acceso "Cualquier persona").', 'error');
+            }
+        }
+
+        // Event listener for number clicks and initial grid generation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Generate number grid
+            for (let i = 0; i < 100; i++) {
+                const number = String(i).padStart(2, '0');
+                const div = document.createElement('div');
+                div.className = 'p-2 sm:p-3 text-center text-lg font-semibold transition-colors duration-200 available-number'; // Default class
+                div.textContent = number;
+                div.dataset.number = number;
+                numberDivs[number] = div; // Store reference
+
+                div.addEventListener('click', () => {
+                    const selectedNumber = div.dataset.number;
+                    document.getElementById('numero_boleto_hidden').value = selectedNumber; // Set hidden input
+                    displayNumeroBoleto.textContent = selectedNumber; // Display selected number
+
+                    const existingParticipant = participantDataMap.get(selectedNumber);
+
+                    if (existingParticipant) {
+                        // Populate form with existing data
+                        document.getElementById('nombre').value = existingParticipant.name;
+                        document.getElementById('direccion').value = existingParticipant.address;
+                        document.getElementById('telefono').value = existingParticipant.phone;
+                        document.getElementById('abono').value = existingParticipant.abono;
+                        // Saldo pendiente will be calculated by updateSaldoPendiente
+                    } else {
+                        // Clear form for new selection
+                        document.getElementById('participant-form').reset();
+                    }
+                    abonoValidationMessage.classList.add('hidden'); // Hide validation message on modal open
+                    updateSaldoPendiente(); // Always call to ensure correct saldo is displayed
+                    participantModal.classList.remove('hidden'); // Show the modal
+                    messageDiv.classList.add('hidden'); // Hide any previous messages in the modal
+                });
+                numbersContainer.appendChild(div);
+            }
+
+            // Listen for changes in the abono input to update saldo pendiente and validate
+            abonoInput.addEventListener('input', updateSaldoPendiente);
+
+            // Close modal button functionality
+            closeModalButton.addEventListener('click', () => {
+                participantModal.classList.add('hidden'); // Hide the modal
+                document.getElementById('participant-form').reset(); // Reset the form
+                messageDiv.classList.add('hidden'); // Hide any previous messages
+                abonoValidationMessage.classList.add('hidden'); // Hide validation message on close
+            });
+
+            // Handle form submission (Save/Update)
+            document.getElementById('participant-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                if (!validateAbono()) {
+                    showMessage('Por favor, corrige el valor del abono.', 'error');
+                    return;
+                }
+
+                if (!db || !currentUserId) {
+                    showMessage('Error: Firebase no inicializado o usuario no autenticado.', 'error');
+                    return;
+                }
+
+                const name = document.getElementById('nombre').value;
+                const address = document.getElementById('direccion').value;
+                const phone = document.getElementById('telefono').value;
+                const raffleNumber = document.getElementById('numero_boleto_hidden').value.trim(); // Get from hidden input
+                const abono = parseInt(abonoInput.value) || 0; // Parse as integer
+                const saldoPendiente = ticketPrice - abono; // Calculate saldoPendiente based on current abono
+
+                console.log(`Enviando formulario para el número ${raffleNumber}: Abono=${abono}, Saldo Pendiente=${saldoPendiente}`); // Log de depuración
+
+                if (!name || !address || !phone || !raffleNumber || isNaN(abono)) {
+                    showMessage('Por favor, completa todos los campos requeridos y asegúrate de que el abono sea un número válido.', 'error');
+                    return;
+                }
+
+                const existingParticipant = participantDataMap.get(raffleNumber);
+                const participantDocId = existingParticipant ? existingParticipant.docId : null;
+
+                const participantData = {
+                    name: name,
+                    address: address,
+                    phone: phone,
+                    raffleNumber: raffleNumber,
+                    abono: abono,
+                    saldoPendiente: saldoPendiente, // Use the calculated saldoPendiente
+                    timestamp: new Date().toISOString(), // Usar ISO string para mejor compatibilidad con Apps Script
+                    userId: currentUserId
+                };
+
+                try {
+                    if (participantDocId) {
+                        // Update existing document in Firestore
+                        await updateDoc(doc(db, `artifacts/${appId}/public/data/raffleParticipants`, participantDocId), participantData);
+                        showMessage('¡Datos del participante actualizados con éxito!', 'success');
+                    } else {
+                        // Add new document to Firestore
+                        const docRef = await addDoc(collection(db, `artifacts/${appId}/public/data/raffleParticipants`), participantData);
+                        participantData.docId = docRef.id; // Add docId to data for map
+                        showMessage('¡Datos del participante guardados con éxito!', 'success');
+                    }
+
+                    // Send data to Google Apps Script for Google Sheet update
+                    await sendDataToGoogleSheet(participantData);
+
+                    // Update participantDataMap and UI after successful save/update
+                    participantDataMap.set(raffleNumber, participantData);
+                    updateNumberUI(raffleNumber, abono); // Update color based on abono
+
+                    // Automatically close modal after successful submission
+                    setTimeout(() => {
+                        participantModal.classList.add('hidden');
+                        document.getElementById('participant-form').reset();
+                        messageDiv.classList.add('hidden');
+                        abonoValidationMessage.classList.add('hidden'); // Hide validation message on successful close
+                    }, 2000); // Hide after 2 seconds
+                } catch (e) {
+                    console.error("Error al guardar/actualizar el documento en Firestore o Google Sheet: ", e);
+                    showMessage('Error al guardar los datos. Intenta de nuevo.', 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
