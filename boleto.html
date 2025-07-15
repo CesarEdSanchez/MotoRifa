@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Boleto de Rifa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .ticket-container {
+            border: 2px dashed #10B981; /* Verde fuerte */
+            border-radius: 0.75rem;
+            padding: 1rem;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px; /* Ancho máximo para el boleto */
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .flag-stripe {
+            height: 10px;
+            background: linear-gradient(to right, #10B981 33%, #F9FAFB 33%, #F9FAFB 66%, #EF4444 66%);
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-xl w-full bg-white shadow-xl rounded-xl overflow-hidden border-4 border-green-600 p-6 mb-8">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4 text-center">Generador de Imagen de Boleto de Rifa</h1>
+        <form id="ticket-form" class="space-y-4">
+            <div>
+                <label for="raffleNumber" class="block text-sm font-medium text-gray-700">Número de Boleto (00-99):</label>
+                <input type="number" id="raffleNumber" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500" min="0" max="99" value="00" required>
+            </div>
+            <div>
+                <label for="participantName" class="block text-sm font-medium text-gray-700">Nombre del Participante:</label>
+                <input type="text" id="participantName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500" placeholder="Ej: Juan Pérez" required>
+            </div>
+            <div>
+                <label for="abonoAmount" class="block text-sm font-medium text-gray-700">Abono (MXN):</label>
+                <input type="number" id="abonoAmount" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500" min="0" value="0" required>
+            </div>
+            <div class="flex justify-center gap-4">
+                <button type="button" id="generateButton" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                    Generar Boleto
+                </button>
+                <button type="button" id="downloadButton" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200" disabled>
+                    Descargar Imagen
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="ticket-preview-container flex flex-col items-center">
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Vista Previa del Boleto:</h2>
+        <canvas id="ticketCanvas" width="400" height="250" class="border border-gray-300 rounded-md shadow-md"></canvas>
+    </div>
+
+    <script>
+        const ticketCanvas = document.getElementById('ticketCanvas');
+        const ctx = ticketCanvas.getContext('2d');
+        const generateButton = document.getElementById('generateButton');
+        const downloadButton = document.getElementById('downloadButton');
+        const raffleNumberInput = document.getElementById('raffleNumber');
+        const participantNameInput = document.getElementById('participantName');
+        const abonoAmountInput = document.getElementById('abonoAmount');
+        const ticketPrice = 300; // Costo total del boleto
+
+        // Function to draw the ticket on the canvas
+        function drawTicket() {
+            // Clear canvas
+            ctx.clearRect(0, 0, ticketCanvas.width, ticketCanvas.height);
+
+            // Background
+            ctx.fillStyle = '#F9FAFB'; // White background
+            ctx.fillRect(0, 0, ticketCanvas.width, ticketCanvas.height);
+
+            // Border
+            ctx.strokeStyle = '#10B981'; // Green border
+            ctx.lineWidth = 4;
+            ctx.strokeRect(2, 2, ticketCanvas.width - 4, ticketCanvas.height - 4);
+
+            // Flag gradient top
+            const gradient = ctx.createLinearGradient(0, 0, ticketCanvas.width, 0);
+            gradient.addColorStop(0, '#10B981'); // Green
+            gradient.addColorStop(0.33, '#10B981');
+            gradient.addColorStop(0.33, '#F9FAFB'); // White
+            gradient.addColorStop(0.66, '#F9FAFB');
+            gradient.addColorStop(0.66, '#EF4444'); // Red
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, ticketCanvas.width, 15);
+
+            // Title
+            ctx.font = 'bold 20px Inter';
+            ctx.fillStyle = '#000'; // Black text
+            ctx.textAlign = 'center';
+            ctx.fillText('¡Gran Rifa del Día de la Independencia!', ticketCanvas.width / 2, 40);
+
+            ctx.font = '16px Inter';
+            ctx.fillText('Motoneta Eléctrica HONEY WHALE', ticketCanvas.width / 2, 65);
+
+            // Raffle Number
+            const raffleNumber = String(raffleNumberInput.value).padStart(2, '0');
+            ctx.font = 'bold 60px Inter';
+            ctx.fillStyle = '#059669'; // Darker green
+            ctx.fillText(raffleNumber, ticketCanvas.width / 2, 130);
+
+            ctx.font = '12px Inter';
+            ctx.fillStyle = '#4B5563'; // Gray text
+            ctx.fillText('Número de Boleto', ticketCanvas.width / 2, 150);
+
+            // Participant Name
+            const participantName = participantNameInput.value;
+            ctx.font = 'bold 14px Inter';
+            ctx.fillStyle = '#374151'; // Darker gray
+            ctx.textAlign = 'left';
+            ctx.fillText(`Nombre: ${participantName}`, 20, 180);
+
+            // Abono and Saldo Pendiente
+            const abonoAmount = parseFloat(abonoAmountInput.value) || 0;
+            const saldoPendiente = ticketPrice - abonoAmount;
+
+            ctx.font = '14px Inter';
+            ctx.fillStyle = '#374151';
+            ctx.fillText(`Abono: $${abonoAmount.toFixed(2)} MXN`, 20, 205);
+            ctx.fillText(`Saldo Pendiente: $${saldoPendiente.toFixed(2)} MXN`, 20, 225);
+
+            // Status indicator (small circle)
+            let statusColor = '#D1D5DB'; // Available (gray)
+            if (abonoAmount === ticketPrice) {
+                statusColor = '#047857'; // Fully Paid (dark green)
+            } else if (abonoAmount > 0 && abonoAmount < ticketPrice) {
+                statusColor = '#D97706'; // Partially Paid (dark yellow)
+            }
+            ctx.beginPath();
+            ctx.arc(ticketCanvas.width - 30, 190, 8, 0, Math.PI * 2, true); // Circle
+            ctx.fillStyle = statusColor;
+            ctx.fill();
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Sorteo details
+            ctx.font = 'bold 12px Inter';
+            ctx.fillStyle = '#374151';
+            ctx.textAlign = 'right';
+            ctx.fillText('Sorteo MAGNO 389 - Lotería Nacional', ticketCanvas.width - 20, 180);
+            ctx.fillText('15 Septiembre 2025, 8:00 PM', ticketCanvas.width - 20, 195);
+            ctx.fillText('Ganador: 2 últimos dígitos del sorteo', ticketCanvas.width - 20, 210);
+
+            // Enable download button after drawing
+            downloadButton.disabled = false;
+        }
+
+        // Event listeners
+        generateButton.addEventListener('click', drawTicket);
+        
+        // Initial draw when page loads with default values
+        document.addEventListener('DOMContentLoaded', drawTicket);
+
+        downloadButton.addEventListener('click', () => {
+            const dataURL = ticketCanvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `boleto_rifa_${String(raffleNumberInput.value).padStart(2, '0')}.png`;
+            link.href = dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Update ticket on input changes
+        raffleNumberInput.addEventListener('input', drawTicket);
+        participantNameInput.addEventListener('input', drawTicket);
+        abonoAmountInput.addEventListener('input', drawTicket);
+    </script>
+</body>
+</html>
